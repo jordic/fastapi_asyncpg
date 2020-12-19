@@ -27,19 +27,20 @@ jobs:
 
       - name: Install package
         run: |
-          pip install flake8==3.7.7
-          pip install mypy==0.720
-          pip install black==19.10b0
-          pip install isort==4.3.21
+          pip install mypy
+          pip install black
+          pip install isort
       - name: Run pre-checks
         run: |
-          flake8 fastapi_asyncpg --config=setup.cfg
-          mypy fastapi_asyncpg/ --ignore-missing-imports
+          mypy fastapi_asyncpg/
           isort -c -rc fastapi_asyncpg/
-          black -l 80 --check --verbose fastapi_asyncpg
+          black -l 80 --check --verbose fastapi_asyncpg/
   # Job to run tests
   tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9]
     # Set environment variables
     steps:
       - name: Checkout the repository
@@ -56,7 +57,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest -rfE --cov=fastapi_asyncpg -s --tb=native -v --cov-report xml --cov-append tests
+          pytest -vs tests/
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1

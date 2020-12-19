@@ -119,7 +119,7 @@ async def test_pool_releases_connections(asgiapp):
         for i in range(5):
             tasks.append(client.get("/test"))
 
-        await asyncio.gatther(*tasks)
+        await asyncio.gather(*tasks)
         async with app.state.pool.acquire() as db:
             result = await db.fetchval(
                 "SELECT sum(numbackends) FROM pg_stat_database;"

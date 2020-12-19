@@ -34,6 +34,7 @@ setup(
             "async_asgi_testclient",
             "pytest-asyncio",
         ],
+        "publish": ["twine"],
     },
     classifiers=[
         "License :: OSI Approved :: MIT License",
