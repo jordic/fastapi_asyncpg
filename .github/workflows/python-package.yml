@@ -1,0 +1,64 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Python package
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  pre-checks:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9]
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install package
+        run: |
+          pip install flake8==3.7.7
+          pip install mypy==0.720
+          pip install black==19.10b0
+          pip install isort==4.3.21
+      - name: Run pre-checks
+        run: |
+          flake8 fastapi_asyncpg --config=setup.cfg
+          mypy fastapi_asyncpg/ --ignore-missing-imports
+          isort -c -rc fastapi_asyncpg/
+          black -l 80 --check --verbose fastapi_asyncpg
+  # Job to run tests
+  tests:
+    runs-on: ubuntu-latest
+    # Set environment variables
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install the package
+        run: |
+          pip install -e .[test]
+
+      - name: Run tests
+        run: |
+          pytest -rfE --cov=fastapi_asyncpg -s --tb=native -v --cov-report xml --cov-append tests
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage.xml
