@@ -27,12 +27,12 @@ jobs:
 
       - name: Install package
         run: |
-          pip install mypy==0.720
-          pip install black==19.10b0
-          pip install isort==4.3.21
+          pip install mypy
+          pip install black
+          pip install isort
       - name: Run pre-checks
         run: |
-          mypy fastapi_asyncpg/ --ignore-missing-imports
+          mypy fastapi_asyncpg/
           isort -c -rc fastapi_asyncpg/
           black -l 80 --check --verbose fastapi_asyncpg/
   # Job to run tests
