@@ -27,13 +27,11 @@ jobs:
 
       - name: Install package
         run: |
-          pip install flake8==3.7.7
           pip install mypy==0.720
           pip install black==19.10b0
           pip install isort==4.3.21
       - name: Run pre-checks
         run: |
-          flake8 fastapi_asyncpg/ --config=setup.cfg
           mypy fastapi_asyncpg/ --ignore-missing-imports
           isort -c -rc fastapi_asyncpg/
           black -l 80 --check --verbose fastapi_asyncpg/
