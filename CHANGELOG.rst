@@ -1,4 +1,3 @@
-
 - 1.0.1
   Fix testing pool incorrectly disconnected
 
