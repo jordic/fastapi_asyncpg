@@ -116,7 +116,7 @@ async def test_pool_releases_connections(asgiapp):
         res = await client.post("/", json={"key": "test", "value": "val1"})
         assert res.status_code == 200
         tasks = []
-        for i in range(5):
+        for i in range(20):
             tasks.append(client.get("/test"))
 
         await asyncio.gather(*tasks)
