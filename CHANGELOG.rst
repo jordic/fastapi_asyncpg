@@ -1,3 +1,5 @@
-## 1.0.0
+- 1.0.1
+  Fix testing pool incorrectly disconnected
 
-- Initial release
+- 1.0.0
+  Initial release

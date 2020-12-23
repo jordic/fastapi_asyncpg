@@ -44,6 +44,7 @@ class configure_asyncpg:
     async def on_connect(self):
         """handler called during initialitzation of asgi app, that connects to
         the db"""
+        # if the pool is comming from outside (tests), don't connect it
         if self._pool:
             self.app.state.pool = self._pool
             return
@@ -53,6 +54,10 @@ class configure_asyncpg:
         self.app.state.pool = pool
 
     async def on_disconnect(self):
+        # if the pool is comming from outside, don't desconnect it
+        # someone else will do (usualy a pytest fixture)
+        if self._pool:
+            return
         await self.app.state.pool.close()
 
     def on_init(self, func):
