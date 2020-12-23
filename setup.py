@@ -8,7 +8,7 @@ with open("README.md", "r") as f:
 
 setup(
     name="fastapi_asyncpg",
-    version="1.0.0",
+    version="1.0.1",
     url="https://github.com/jordic/fastapi_asyncpg",
     license="MIT",
     author="Jordi collell",
