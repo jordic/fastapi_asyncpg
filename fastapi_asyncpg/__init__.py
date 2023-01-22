@@ -108,12 +108,10 @@ class configure_asyncpg:
 
     def _get_pool_manager_from_app(self):
         """Find or create singleton AppPoolManager instance within self.app.state"""
-        if not (
-            pool_manager := getattr(self.app.state, "fastapi_asyncpg_pool_manager")
-        ):
+        if not hasattr(self.app.state, "fastapi_asyncpg_pool_manager"):
             self.app.state.fastapi_asyncpg_pool_manager = AppPoolManager()
 
-        return pool_manager
+        return self.app.state.fastapi_asyncpg_pool_manager
 
     atomic = transaction
 
