@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=45", "setuptools-scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fastapi_asyncpg"
+version = "1.0.1"
+description = "FastAPI integration for asyncpg"
+readme = "README.md"
+requires-python = ">=3.9,<3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "Jordi collell", email = "jordic@gmail.com"}
+]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+]
+dependencies = [
+    "fastapi",
+    "asyncpg",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "mypy"
+]
+docs = [
+    "sphinx",
+    "recommonmark",
+]
+test = [
+    "pytest-docker-fixtures[pg]",
+    "pytest",
+    "async_asgi_testclient",
+    "pytest-asyncio",
+]
+publish = [
+    "twine",
+]
+
+[project.urls]
+Homepage = "https://github.com/jordic/fastapi_asyncpg"
+
+[tool.setuptools]
+packages = {find = {exclude = ["tests"]}}
+
+[tool.setuptools.package-data]
+fastapi = ["py.typed"]
+
+[tool.ruff]
+line-length = 120
+exclude = [".git", "__pycache__", "docs/source/conf.py", "old", "build", "dist"]
+
+[tool.ruff.lint]
+ignore = ["E302", "W391", "E701", "F901", "E252", "E203"]
+
+[tool.ruff.format]
+line-ending = "auto"
+
+[tool.mypy]
+namespace_packages = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"

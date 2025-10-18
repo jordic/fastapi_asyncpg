@@ -11,9 +11,7 @@ import pydantic as pd
 import pytest
 import asyncio
 
-images.configure(
-    "postgresql", "postgres", "11.1", env={"POSTGRES_DB": "test_db"}
-)
+images.configure("postgresql", "postgres", "11.1", env={"POSTGRES_DB": "test_db"})
 
 pytestmark = pytest.mark.asyncio
 
@@ -56,13 +54,9 @@ async def asgiapp(pg):
         return dict(result)
 
     @app.get("/transaction")
-    async def with_transaction(
-        q: Optional[int] = 0, db=Depends(bdd.transaction)
-    ):
+    async def with_transaction(q: Optional[int] = 0, db=Depends(bdd.transaction)):
         for i in range(10):
-            await db.execute(
-                "INSERT INTO keyval values ($1, $2)", f"t{i}", f"t{i}"
-            )
+            await db.execute("INSERT INTO keyval values ($1, $2)", f"t{i}", f"t{i}")
             if q == 1:
                 raise HTTPException(412)
         return dict(result="ok")
@@ -121,7 +115,5 @@ async def test_pool_releases_connections(asgiapp):
 
         await asyncio.gather(*tasks)
         async with app.state.pool.acquire() as db:
-            result = await db.fetchval(
-                "SELECT sum(numbackends) FROM pg_stat_database;"
-            )
+            result = await db.fetchval("SELECT sum(numbackends) FROM pg_stat_database;")
             assert result == 2
