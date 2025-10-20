@@ -16,7 +16,7 @@ class configure_asyncpg:
         app: FastAPI,
         dsn: str,
         *,
-        init_db: typing.Callable = None,  # callable for running sql on init
+        init_db: typing.Optional[typing.Callable] = None,  # callable for running sql on init
         pool=None,  # usable on testing
         **options,
     ):
@@ -117,7 +117,7 @@ class SingleConnectionTestingPool:
     def __init__(
         self,
         conn: asyncpg.Connection,
-        initialize: typing.Callable = None,
+        initialize: typing.Optional[typing.Callable] = None,
         add_logger_postgres: bool = False,
     ):
         self._conn = conn
@@ -154,16 +154,14 @@ class SingleConnectionTestingPool:
 async def create_pool_test(
     dsn: str,
     *,
-    initialize: typing.Callable = None,
+    initialize: typing.Optional[typing.Callable] = None,
     add_logger_postgres: bool = False,
 ):
     """This part is only used for testing,
     we create a fake "pool" that just starts a connecion,
     that does a transaction inside it"""
     conn = await asyncpg.connect(dsn=dsn)
-    pool = SingleConnectionTestingPool(
-        conn, initialize=initialize, add_logger_postgres=add_logger_postgres
-    )
+    pool = SingleConnectionTestingPool(conn, initialize=initialize, add_logger_postgres=add_logger_postgres)
     return pool
 
 

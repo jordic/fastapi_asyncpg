@@ -1,15 +1,12 @@
 .PHONY: isort black flake8 mypy
 
-lint: isort black flake8 mypy
-
-isort:
-	isort fastapi_asyncpg
-
-black:
-	black fastapi_asyncpg/  -l 80
-
-flake8:
-	flake8 fastapi_asyncpg
+lint:
+	uv run --python 3.10 --extra dev ruff check . --fix
+	uv run --python 3.10 --extra dev ruff format .
 
 mypy:
-	mypy fastapi_asyncpg
+	uv run --python 3.10 --extra dev mypy fastapi_asyncpg
+
+test:
+	uv run --python 3.9 --extra test pytest tests
+	uv run --python 3.10 --extra test pytest tests

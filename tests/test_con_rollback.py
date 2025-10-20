@@ -16,9 +16,7 @@ pytestmark = pytest.mark.asyncio
 
 dir = Path(__file__).parent
 
-images.configure(
-    "postgresql", "postgres", "11.1", env={"POSTGRES_DB": "test_db"}
-)
+images.configure("postgresql", "postgres", "11.1", env={"POSTGRES_DB": "test_db"})
 
 
 @pytest.fixture
@@ -48,7 +46,7 @@ async def test_the_db_is_empty_again(pool):
 
 
 async def test_sql(pool):
-    """ sql.py contains poor man sql helpers to work with sql and asyncpg """
+    """sql.py contains poor man sql helpers to work with sql and asyncpg"""
     async with pool.acquire() as db:
         res = await sql.insert(db, "test", {"item": "test", "val": "value"})
         result = await sql.get(db, "test", "id=$1", args=[res["id"]])
@@ -104,13 +102,11 @@ class Schema(pd.BaseModel):
 
     item: str
     val: str
-    id: typing.Optional[int]
+    id: typing.Optional[int] = None
 
     async def save(self, db):
         if self.id is None:
-            result = await sql.insert(
-                db, self.__tablename__, self.dict(exclude_unset=True)
-            )
+            result = await sql.insert(db, self.__tablename__, self.dict(exclude_unset=True))
             self.id = result["id"]
         else:
             result = await sql.update_by(

@@ -17,9 +17,7 @@ async def select(conn, table, condition="1 = 1", args=None, fields="*"):
 
 async def count(conn, table, where="1=1", args=None):
     args = args or []
-    return await conn.fetchval(
-        f"select count(*) from {table} WHERE {where}", *args
-    )
+    return await conn.fetchval(f"select count(*) from {table} WHERE {where}", *args)
 
 
 async def insert(conn, table, values):
@@ -45,9 +43,7 @@ async def update(conn, table, conditions: dict, values: dict):
         vals.append(f"{column}=${counter}")
         params.append(value)
         counter += 1
-    sql = qs.format(
-        table=table, columns=" ,".join(vals), cond=" AND ".join(cond)
-    )
+    sql = qs.format(table=table, columns=" ,".join(vals), cond=" AND ".join(cond))
     return await conn.fetchrow(sql, *params)
 
 

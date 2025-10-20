@@ -19,3 +19,4 @@ pyvenv.cfg
 *.profraw
 *.py?
 *.swp
+.venv
