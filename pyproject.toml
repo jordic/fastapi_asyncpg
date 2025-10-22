@@ -7,7 +7,7 @@ name = "fastapi_asyncpg"
 version = "1.0.1"
 description = "FastAPI integration for asyncpg"
 readme = "README.md"
-requires-python = ">=3.9,<3.11"
+requires-python = ">=3.9,<3.14"
 license = {text = "MIT"}
 authors = [
     {name = "Jordi collell", email = "jordic@gmail.com"}
@@ -63,6 +63,8 @@ line-ending = "auto"
 
 [tool.mypy]
 namespace_packages = true
+ignore_missing_imports = true
+follow_imports = "skip"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
