@@ -23,14 +23,14 @@ class configure_asyncpg:
         """This is the entry point to configure an asyncpg pool with fastapi.
 
         Arguments
-            app: The fastapp application that we use to store the pool
-                and bind to it's initialitzation events
-            dsn: A postgresql desn like postgresql://user:password@postgresql:5432/db
+            app: The fastapi application that we use to store the pool
+                and bind to its initialization events
+            dsn: A postgresql dsn like postgresql://user:password@postgresql:5432/db
             init_db: Optional callable that receives a db connection,
-                for doing an initialitzation of it
-            pool: This is used for testing to skip the pool initialitzation
-                an just use the SingleConnectionTestingPool
-            **options: connection options to directly pass to asyncpg driver
+                for initialitzation
+            pool: This is used for testing to skip the pool intitialization
+                and just use the SingleConnectionTestingPool
+            **options: connection options to directly pass to the asyncpg driver
                 see: https://magicstack.github.io/asyncpg/current/api/index.html#connection-pools
         """
         self.app = app
@@ -42,7 +42,7 @@ class configure_asyncpg:
         self.app.router.add_event_handler("shutdown", self.on_disconnect)
 
     async def on_connect(self):
-        """handler called during initialitzation of asgi app, that connects to
+        """handler called during intitialization of asgi app, that connects to
         the db"""
         # if the pool is comming from outside (tests), don't connect it
         if self._pool:
@@ -70,8 +70,8 @@ class configure_asyncpg:
 
     async def connection(self):
         """
-        A ready to use connection Dependency just usable
-        on your path functions that gets a connection from the pool
+        A ready-to-use connection Dependency usable in your path
+        functions that gets a connection from the pool
         Example:
             db = configure_asyncpg(app, "dsn://")
             @app.get("/")
@@ -83,14 +83,14 @@ class configure_asyncpg:
 
     async def transaction(self):
         """
-        A ready to use transaction Dependecy just usable on a path function
+        A ready to use transaction Dependecy usable in a path function
         Example:
             db = configure_asyncpg(app, "dsn://")
             @app.get("/")
             async def get_content(db = Depens(db.transaction)):
                 await db.execute("insert into keys values (1, 2)")
                 await db.execute("insert into keys values (1, 2)")
-        All view function executed, are wrapped inside a postgresql transaction
+        All view functions executed are wrapped inside a postgresql transaction
         """
         async with self.pool.acquire() as db:
             txn = db.transaction()
@@ -108,7 +108,7 @@ class configure_asyncpg:
 
 class SingleConnectionTestingPool:
     """A fake pool that simulates pooling, but runs on
-    a single transaction that it's rolled back after
+    a single transaction. The transaction is rolled back after
     each test.
     With some large schemas this seems to be faster than
     the other approach
@@ -157,9 +157,9 @@ async def create_pool_test(
     initialize: typing.Optional[typing.Callable] = None,
     add_logger_postgres: bool = False,
 ):
-    """This part is only used for testing,
-    we create a fake "pool" that just starts a connecion,
-    that does a transaction inside it"""
+    """This part is only used for testing.
+    We create a fake "pool" that just starts a connection
+    and does a transaction inside it"""
     conn = await asyncpg.connect(dsn=dsn)
     pool = SingleConnectionTestingPool(conn, initialize=initialize, add_logger_postgres=add_logger_postgres)
     return pool

@@ -55,7 +55,7 @@ async def delete(db, table, condition, args=None):
 def query_to_json(query, name):
     """This query is useful to fetch a complex join
     with some aggregations as a single blob, and later,
-    just hydrate it without having to iterate over the resultset
+    hydrate it without having to iterate over the resultset
 
     .. Example:
         SELECT
@@ -70,7 +70,7 @@ def query_to_json(query, name):
         WHERE user_id = ANY($1)
         GROUP BY u.user_id;
 
-    This query will fetch a list of users, and aggregate it's
+    This query will fetch a list of users, and aggregate its
     scopes as an array of dicts
     """
 

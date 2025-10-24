@@ -4,43 +4,42 @@ FastAPI integration for AsyncPG
 
 ## Narrative
 
-First of all, so sorry for my poor english. I will be so happy,
-if someone pushes a PR correcting all my english mistakes. Anyway
+First of all, I am so sorry for my poor English. I will be so happy
+if someone pushes a PR correcting all my English mistakes. Anyway,
 I will try to do my best.
 
-Looking at fastapi ecosystem seems like everyone is trying to integrate
-fastapi with orms, but from my experience working with raw
+Looking at the fastapi ecosystem seems like everyone is trying to
+integrate fastapi with orms, but from my experience working with raw
 sql I'm so productive.
 
-If you think a bit around, your real model layer, is the schema on your
-db (you can add abastractions on top of it), but what ends
-is your data, and these are tables, columns and rows.
+If you think a little, your real model layer is the schema of your
+db. You can add abstractions on top of it, but what matters in the
+end is your data. The tables, columns and rows.
 
 Also, sql, it's one of the best things I learned
 because it's something that always is there.
 
-On another side, postgresql it's robust and rock solid,
-thousands of projects depend on it, and use it as their storage layer.
-AsyncPG it's a crazy fast postgresql driver
-written from scratch.
+Another note, postgresql is robust and rock solid.
+Thousands of projects depend on it and use it as their storage layer.
+AsyncPG is a crazy fast postgresql driver written from scratch.
 
 FastAPI seems like a clean, and developer productive approach to web
 frameworks. It's crazy how well it integrates with OpenAPI,
-and how easy makes things to a developer to move on.
+and how easy it makes things for a developer.
 
 ## Integration
 
-fastapi_asyncpg trys to integrate fastapi and asyncpg in an idiomatic way.
-fastapi_asyncpg when configured exposes two injectable providers to
-fastapi path functions, can use:
+fastapi_asyncpg tries to integrate fastapi and asyncpg in an idiomatic way.
+fastapi_asyncpg when configured exposes two injectable providers that
+fastapi path functions can use:
 
-- `db.connection` : it's just a raw connection picked from the pool,
-  that it's auto released when pathfunction ends, this is mostly
-  merit of the DI system around fastapi.
+- `db.connection`: a raw connection picked from the pool, that is
+auto-released when path function ends. This is mostly thanks to the
+DI system around fastapi.
 
-- `db.transaction`: the same, but wraps the pathfuncion on a transaction
-  this is more or less the same than the `atomic` decorator from Django.
-  also `db.atomic` it's aliased
+- `db.transaction`: the same, but wraps the path funcion in a transaction
+  this is more or less the same as the `atomic` decorator from Django.
+  It is also aliased as `db.atomic`
 
 ```python
 from fastapi import FastAPI
@@ -69,27 +68,28 @@ async def mutate_something_compled(db=Depends(db.atomic))
     # if something fails, everyting is rolleback, you know all or nothing
 ```
 
-And there's also an `initialization` callable on the main factory function.
-That can be used like in flask to initialize whatever you need on the db.
-The `initialization` is called right after asyncpg stablishes a connection,
+There's also an `initialization` callable on the main factory function.
+This can be used as in flask to do whatever initializion you need.
+`initialization` is called right after asyncpg stablishes a connection,
 and before the app fully boots. (Some projects use this as a poor migration
-runner, not the best practice if you are deploying multiple
+runner, but this is not the best practice if you are deploying multiple
 instances of the app).
 
 ## Testing
 
-For testing we use [pytest-docker-fixtures](https://pypi.org/project/pytest-docker-fixtures/), it requires docker on the host machine or on whatever CI you use
-(seems like works as expected with github actions)
+For testing we use [pytest-docker-fixtures](https://pypi.org/project/pytest-docker-fixtures/),
+it requires docker on the host machine or on whatever CI you use
+(it works as expected with github actions)
 
-It works, creating a container for the session and exposing it as pytest fixture.
+It creates a container for the session and exposes it as pytest fixture.
 It's a good practice to run tests with a real database, and
-pytest-docker-fixtures make it's so easy. As a bonus, all fixtures run on a CI.
-We use Jenkins witht docker and docker, but also seems like travis and github actions
-also work.
+pytest-docker-fixtures makes it so easy. As a bonus, all fixtures run in CI.
+We use Jenkins with docker, and docker, but it seems that travis and github
+actions also work.
 
 The fixture needs to be added to the pytest plugins `conftest.py` file.
 
-on conftest.py
+in conftest.py
 
 ```python
 pytest_plugins = [
@@ -97,7 +97,7 @@ pytest_plugins = [
 ]
 ```
 
-With this in place, we can just yield a pg fixture
+With this in place, we can yield a pg fixture
 
 ```python
 from pytest_docker_fixtures import images
@@ -149,9 +149,9 @@ async def test_something(asgi_app):
         res = await client.request("/")
 ```
 
-Anyway if the application will grow, to multiples subpackages,
-and apps, we trend to build the main app as a factory, that
-creates it, something like:
+If the application grows to multiples subpackages and
+apps, we can build the main app as a factory. Something
+like:
 
 ```python
 from fastapi_asyncpg import configure_asyncpg
@@ -168,7 +168,7 @@ def make_asgi_app(settings):
     return app
 ````
 
-Then on the fixture, we just need, to factorze and app from our function
+Then in the fixture, we just need to factorize an app from our function
 
 ```python
 
@@ -184,7 +184,7 @@ async def asgi_app(pg)
     host, port = pg
     dsn = f"postgresql://postgres@{host}:{port}/test_db"
     app = make_asgi_app({"dsn": dsn})
-    # ther's a pointer on the pool into app.state
+    # there's a pointer to the pool into app.state
     yield app
 
 async def test_something(asgi_app):
@@ -193,7 +193,7 @@ async def test_something(asgi_app):
     async with db.pool.acquire() as db:
         # setup your test state
 
-    # this context manager handlers lifespan events
+    # this context manager handles lifespan events
     async with TestClient(app) as client:
         res = await client.request("/")
 
@@ -202,16 +202,16 @@ async def test_something(asgi_app):
 There's also another approach exposed and used on [tests](tests/test_db.py),
 that exposes a single connection to the test and rolls back changes on end.
 We use this approach on a large project (500 tables per schema and
-multiples schemas), and seems like it speeds up a bit test creation.
-This approach is what [Databases](https://www.encode.io/databases/) it's using.
-Feel free to follow the tests to see if it feets better.
+multiples schemas), and seems like it speeds up test creation a bit.
+This approach is what [Databases](https://www.encode.io/databases/) is using.
+Feel free to follow the tests to see if it feels better.
 
 ## Extras
 
-There are some utility functions I daily use with asyncpg that helps me
-speed up some sql operations like, they are all on sql.py, and mostly are
-self documented. They are in use on tests.
+There are some utility functions I use daily with asyncpg that help me
+speed up some sql operations. They are all in sql.py, and are mostly
+self documented. They are in use in tests.
 
 ### Authors
 
-`fastapi_asyncpg` was written by `Jordi collell <jordic@gmail.com>`\_.
+`fastapi_asyncpg` was written by `Jordi Collell <jordic@gmail.com>`\_.
